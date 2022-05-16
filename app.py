@@ -1,13 +1,15 @@
-from flask import Flask, Response
+from flask import Flask,request,Response
 from gtts import gTTS
 
 app = Flask(__name__)
 
 @app.route("/name/<string:name>")
 def streamwav(name):
+    language = request.args.get('language')
     def generate():
-        language = 'en'
-        mySpeech = gTTS(text=name,lang=language,slow=False)
+        reqLanguage = language
+        splitLang = reqLanguage.split("@")
+        mySpeech = gTTS(text=name,lang=splitLang[0],tld=splitLang[1],slow=False)
         mySpeech.save('speechname.mp3')
         with open("speechname.mp3", "rb") as fwav:
             data = fwav.read(1024)
